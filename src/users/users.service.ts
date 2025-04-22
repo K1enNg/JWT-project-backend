@@ -6,7 +6,7 @@ import { Model } from 'mongoose';
 import { User } from './schemas/user.schema';
 import { hashPassword } from 'src/utils/utils';
 import aqp from 'api-query-params';
-
+import mongoose from 'mongoose';
 
 @Injectable()
 export class UsersService {
@@ -40,7 +40,7 @@ export class UsersService {
   }
 
   async findAll(query: string, current: number, pageSize: number) {
-    const {filter, sort} = aqp(query);
+    const { filter, sort } = aqp(query);
     if (filter.current) delete filter.current;
     if (filter.pageSize) delete filter.pageSize;
 
@@ -53,25 +53,29 @@ export class UsersService {
     const skip = (current - 1) * pageSize;
 
     const result = await this.userModel
-    .find(filter)
-    .limit(pageSize)
-    .skip(skip)
-    .select('-password')
-    .sort(sort as any);
+      .find(filter)
+      .limit(pageSize)
+      .skip(skip)
+      .select('-password')
+      .sort(sort as any);
 
-    return {result, totalPages};
+    return { result, totalPages };
   }
 
   findOne(id: number) {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(updateUserDto: UpdateUserDto) {
+    return await this.userModel.updateOne({ _id: updateUserDto }, { ...updateUserDto });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(_id: string) {
+    if (mongoose.isValidObjectId(_id)) {
+      return this.userModel.deleteOne({ _id });
+    } else {
+      throw new BadRequestException('Invalid ID');
+    }
   }
 }
 
