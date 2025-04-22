@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "author": {
-    "name" : "Kien Nguyen",
+    "name": "Kien Nguyen",
     "url": "https://kienfolio.vercel.app/"
   },
   "private": true,
@@ -24,8 +24,18 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/mapped-types": "*",
+    "@nestjs/mongoose": "^11.0.3",
     "@nestjs/platform-express": "^11.0.1",
+    "@types/bcrypt": "^5.0.2",
+    "api-query-params": "^5.4.0",
+    "bcrypt": "^5.1.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "kill-port": "^2.0.1",
+    "mongoose": "^8.13.2",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
