@@ -7,6 +7,9 @@ import { User } from './schemas/user.schema';
 import { hashPassword } from 'src/utils/utils';
 import aqp from 'api-query-params';
 import mongoose from 'mongoose';
+import { CreateAuthDto } from 'src/auth/dto/create-auth.dto';
+import { v4 as uuidv4 } from 'uuid';
+import dayjs from 'dayjs';
 
 @Injectable()
 export class UsersService {
@@ -32,7 +35,8 @@ export class UsersService {
       password: hash,
       phone,
       address,
-      image
+      image,
+      createdAt: new Date()
     });
     return {
       _id: user._id
@@ -66,6 +70,10 @@ export class UsersService {
     return `This action returns a #${id} user`;
   }
 
+  async findByEmail(email: string) {
+    return this.userModel.findOne({ email });
+  }
+
   async update(updateUserDto: UpdateUserDto) {
     return await this.userModel.updateOne({ _id: updateUserDto }, { ...updateUserDto });
   }
@@ -76,6 +84,27 @@ export class UsersService {
     } else {
       throw new BadRequestException('Invalid ID');
     }
+  }
+
+  async handleRegister(registerDto: CreateAuthDto) {
+    const { name, email, password } = registerDto;
+    const isExist = await this.isEmailExist(email);
+    if (isExist) {
+      throw new BadRequestException('Email already exists. Please use another email');
+    }
+    const hash = await hashPassword(password);
+    const user = await this.userModel.create({
+      name,
+      email,
+      password: hash,
+      isActive: false,
+      createdAt: dayjs(),
+      codeId: uuidv4(),
+      codeExpired: dayjs().add(1, 'hour')
+    });
+    return {
+      _id: user._id
+    };
   }
 }
 
