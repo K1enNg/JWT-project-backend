@@ -35,7 +35,8 @@ export class UsersService {
       password: hash,
       phone,
       address,
-      image
+      image,
+      createdAt: new Date()
     });
     return {
       _id: user._id
@@ -97,6 +98,7 @@ export class UsersService {
       email,
       password: hash,
       isActive: false,
+      createdAt: dayjs(),
       codeId: uuidv4(),
       codeExpired: dayjs().add(1, 'hour')
     });

@@ -15,7 +15,7 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
-  @Get('register')
+  @Post('register')
   @Public()
   register(@Body() registerDto: CreateAuthDto) {
     return this.authService.handleRegister(registerDto);
