@@ -7,7 +7,8 @@ import { MailerService } from '@nestjs-modules/mailer';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService,
+  constructor(
+    private readonly authService: AuthService,
     private readonly mailerService: MailerService
   ) 
   {}
@@ -35,7 +36,11 @@ export class AuthController {
         from: 'noreply@nestjs.com', // sender address
         subject: 'Testing Nest MailerModule ✔', // Subject line
         text: 'welcome', // plaintext body
-        html: '<b>Welcome</b>', // HTML body content
+        template: 'register.hbs',
+        context: {
+          name: 'Kien',
+          activationCode: 123456789
+        }
       })
     return "Hello World";
   }

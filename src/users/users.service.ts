@@ -10,12 +10,16 @@ import mongoose from 'mongoose';
 import { CreateAuthDto } from 'src/auth/dto/create-auth.dto';
 import { v4 as uuidv4 } from 'uuid';
 import dayjs from 'dayjs';
+import { MailerService } from '@nestjs-modules/mailer';
+
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(User.name)
-    private userModel: Model<User>
+    private userModel: Model<User>,
+    private readonly mailerService: MailerService
+
   ) { }
   isEmailExist = async (email: string) => {
     const user = await this.userModel.findOne({ email });
@@ -93,18 +97,34 @@ export class UsersService {
       throw new BadRequestException('Email already exists. Please use another email');
     }
     const hash = await hashPassword(password);
+    const codeId = uuidv4();
     const user = await this.userModel.create({
       name,
       email,
       password: hash,
       isActive: false,
       createdAt: dayjs(),
-      codeId: uuidv4(),
+      codeId: codeId,
       codeExpired: dayjs().add(1, 'hour')
     });
+    this.mailerService.sendMail({
+      to: user.email, // list of receivers
+      from: 'noreply@nestjs.com', // sender address
+      subject: 'Activate your account', // Subject line
+      template: 'register.hbs',
+      context: {
+        name: user.name,
+        activationCode: codeId
+      }
+    })
     return {
       _id: user._id
     };
+
+
+
   }
+
+
 }
 

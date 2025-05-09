@@ -3,12 +3,14 @@ import { UsersService } from '../users/users.service'
 import { comparePassword } from 'src/utils/utils';
 import { JwtService } from '@nestjs/jwt';
 import { CreateAuthDto } from './dto/create-auth.dto';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private readonly mailerService: MailerService
   ) {}
 
   async validateUser(username: string, pass: string): Promise<any> {
